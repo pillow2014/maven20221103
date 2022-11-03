@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<script src="js/jquery3.6.0.js"></script>
+<form id="form1">
+	<h2>
+		User Name:<input type="text" id="user" name="user" value="George"/><br/>
+		Password:<input type="password" id="pwd" name="password" value="g001"/><br/>
+		<button>Send</button>
+<!-- 要記得加name才會在做傳送動作時被傳送 -->
+	</h2>
+</form>
+<h1>
+	<div id="st"></div>
+	<div id="display"></div>
+</h1>
+<script>
+	function show(data,status)
+	{
+		$('#st').text(status);
+		$('#display').html(data);
+	}
+	function send(e)
+	{
+		e.preventDefault(); //用form做時每次submit都會送出然後更新一次所有資料，不希望被更新要加不然會不執行之後動作
+		
+		var name=$('#user').val();
+		var password=$('#pwd').val();
+		//var frm={"user":name,"password":password};
+		var frm=$("#form1").serialize(); //serialize就是一個將東西打包起來一起傳送出去的指令
+		alert(frm);
+		//$.post("UserPasswordServlet",{"user":name,"password":password},show);
+		//$.post("UserPasswordServlet",frm,show);
+		
+		$.ajax({ //另外一種網上較複雜的寫法
+			url:'UserPasswordServlet',
+			type :'POST',
+			data : frm,
+			contentType:"application/x-www-form-urlencoded",
+			cache: false,
+			datatype:"text/html",
+			success : function(data) 
+			{            	  
+				$("#display").html(data);
+			},error: function(data) 
+			{
+				console.log('無法送出');
+			}
+		});
+		
+	}
+	function start()
+	{
+		//$('button').click(send);
+		$('#form1').submit(send);
+	}
+	$(document).ready(start);
+</script>
+</body>
+</html>
